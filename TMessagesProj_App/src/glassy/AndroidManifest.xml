@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application>
+        <activity-alias
+            android:name="org.telegram.messenger.DefaultIcon"
+            android:icon="@drawable/glassy_launcher"
+            android:roundIcon="@drawable/glassy_launcher"
+            android:label="Glassy Messenger"
+            tools:replace="android:icon,android:roundIcon,android:label" />
+    </application>
+</manifest>
