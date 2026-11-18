@@ -51,6 +51,9 @@ jobs:
                       p.write_text(json.dumps(data, indent=2) + "\n")
           PY
 
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+
       - name: Build Glassy release APK
         run: ./gradlew :TMessagesProj_App:assembleAfatGlassyRelease --no-daemon --stacktrace
 
