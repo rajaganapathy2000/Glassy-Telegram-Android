@@ -1,0 +1,37 @@
+name: Build Glassy Telegram APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract source archive
+        run: |
+          mkdir -p source
+          unzip -q Glassy-Telegram-Android-Source(1).zip -d source
+
+      - name: Find source and build APK
+        run: |
+          DOCKERFILE=$(find source -name Dockerfile -print -quit)
+          if [ -z "$DOCKERFILE" ]; then
+            echo "Dockerfile not found in uploaded source"
+            exit 1
+          fi
+          SRC_DIR=$(dirname "$DOCKERFILE")
+          docker build -t glassy-telegram "$SRC_DIR"
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE/$SRC_DIR:/home/source" \
+            glassy-telegram
+
+      - name: Upload APK files
+        uses: actions/upload-artifact@v4
+        with:
+          name: Glassy-Telegram-APK
+          path: source/**/build/outputs/apk/**/*.apk
+          if-no-files-found: error
+          retention-days: 7
