@@ -4,13 +4,16 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - codex/glassy-telegram-liquid-glass
+      - main
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out source and submodules
+      - name: Checkout source and submodules
         uses: actions/checkout@v4
         with:
           submodules: recursive
@@ -25,32 +28,34 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install Android build tools
-        run: sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;27.2.12479018" "cmake;3.22.1"
+        run: |
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;27.2.12479018" "cmake;3.22.1"
 
-      - name: Prepare Firebase package metadata for private build
+      - name: Prepare Glassy Firebase package entry
         run: |
           python3 - <<'PY'
           import copy, json
           from pathlib import Path
-
-          config_path = Path("TMessagesProj_App/google-services.json")
-          config = json.loads(config_path.read_text())
-          clients = config["client"]
-          if not any(client.get("client_info", {}).get("android_client_info", {}).get("package_name") == "org.telegram.messenger.glassy" for client in clients):
-              source = next(client for client in clients if client.get("client_info", {}).get("android_client_info", {}).get("package_name") == "org.telegram.messenger")
-              glassy_client = copy.deepcopy(source)
-              glassy_client["client_info"]["android_client_info"]["package_name"] = "org.telegram.messenger.glassy"
-              clients.append(glassy_client)
-          config_path.write_text(json.dumps(config, indent=2) + "\n")
+          p = Path("TMessagesProj_App/google-services.json")
+          if p.exists():
+              data = json.loads(p.read_text())
+              clients = data.get("client", [])
+              if not any(c.get("client_info", {}).get("android_client_info", {}).get("package_name") == "org.telegram.messenger.glassy" for c in clients):
+                  source = next((c for c in clients if c.get("client_info", {}).get("android_client_info", {}).get("package_name") == "org.telegram.messenger"), None)
+                  if source:
+                      clone = copy.deepcopy(source)
+                      clone["client_info"]["android_client_info"]["package_name"] = "org.telegram.messenger.glassy"
+                      clients.append(clone)
+                      p.write_text(json.dumps(data, indent=2) + "\n")
           PY
 
-      - name: Build separate Glassy APK
-        run: ./gradlew :TMessagesProj_App:assembleAfatGlassyRelease --no-daemon
+      - name: Build Glassy release APK
+        run: ./gradlew :TMessagesProj_App:assembleAfatGlassyRelease --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: glassy-messenger-android
+          name: glassy-telegram-apk
           path: TMessagesProj_App/build/outputs/apk/afatGlassy/release/*.apk
           if-no-files-found: error
           retention-days: 14
