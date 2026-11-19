@@ -342,6 +342,19 @@ public class LiteMode {
             defaultValue |= FLAG_LIQUID_GLASS;
         }
 
+        // One-time Glassy migration: enable Liquid Glass while preserving
+        // all other saved Lite Mode preferences and subsequent user choices.
+        if (ApplicationLoader.applicationContext != null
+                && ApplicationLoader.applicationContext.getPackageName().endsWith(".glassy")
+                && !preferences.getBoolean("glassy_liquid_glass_initialized", false)) {
+            defaultValue = preferences.getInt("lite_mode6", defaultValue);
+            defaultValue |= FLAG_LIQUID_GLASS;
+            preferences.edit()
+                    .putInt("lite_mode6", defaultValue)
+                    .putBoolean("glassy_liquid_glass_initialized", true)
+                    .apply();
+        }
+
         int prevValue = value;
         value = preferences.getInt("lite_mode6", defaultValue);
         if (loaded) {
