@@ -3217,6 +3217,13 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             phoneInputData.patterns = phoneFormatMap.get(codeField.getText().toString());
             int reqId = ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
                 nextPressed = false;
+                if (error != null) {
+                    needHideProgress(false);
+                    String diagnostic = "Error code: " + error.code
+                            + "\nError text: " + (error.text == null ? "<null>" : error.text);
+                    needShowAlert("Glassy Telegram - Login Diagnostic", diagnostic);
+                    return;
+                }
                 if (error == null) {
                     if (response instanceof TLRPC.TL_auth_sentCodeSuccess) {
                         final TLRPC.auth_Authorization auth = ((TLRPC.TL_auth_sentCodeSuccess) response).authorization;
