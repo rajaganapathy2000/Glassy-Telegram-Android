@@ -14,12 +14,12 @@ import android.os.Build;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.utils.RenderNodeEffects;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.blur3.capture.IBlur3Capture;
 import org.telegram.utils.glass.positions.GlassPositionsArray;
+import org.telegram.utils.glass.GlassEngine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public class DownscaleScrollableNoiseSuppressor {
     }
 
     public DownscaleScrollableNoiseSuppressor(boolean simple, boolean allowNoiseSuppress) {
-        isLiquidGlassEnabled = LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS);
+        isLiquidGlassEnabled = GlassEngine.getCurrentGlassSettings().isLiquidGlassEnabled;
         simpleMode = simple;
         k = isLiquidGlassEnabled || allowNoiseSuppress ? 1 : 8; // 1
 

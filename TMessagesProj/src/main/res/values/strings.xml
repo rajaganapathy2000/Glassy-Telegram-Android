@@ -11679,4 +11679,9 @@
     <string name="FpnvConsentSimSlot">SIM Slot</string>
     <string name="FpnvConsentSimSlotValue">SIM %1$d</string>
     <string name="FpnvConsentPhoneNumber">Phone Number</string>
+    <string name="GlassySettings">Glassy</string>
+    <string name="GlassySettingsInfo">App-wide Liquid Glass</string>
+    <string name="GlassyLiquidGlass">App-wide Liquid Glass</string>
+    <string name="GlassyLiquidGlassInfo">Applies a translucent glass material to supported navigation, toolbars, lists, menus, and sheets. Chat Effects remain separate. The effect pauses in power saving mode and is unavailable on unsupported devices.</string>
+    <string name="GlassyLiquidGlassUnsupported">Requires Android 12 or later and a supported device.</string>
 </resources>

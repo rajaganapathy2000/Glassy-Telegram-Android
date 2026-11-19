@@ -2714,7 +2714,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             iBlur3FactoryLiquidGlass = new BlurredBackgroundDrawableViewFactory(iBlur3SourceGlass);
             iBlur3FactoryLiquidGlass.setLiquidGlassEffectAllowed(true);
-            iBlur3FactoryLiquidGlass.setOutset(LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS) ? dp(8) : dp(48));
+            iBlur3FactoryLiquidGlass.setOutset(GlassEngine.getCurrentGlassSettings().isLiquidGlassEnabled ? dp(8) : dp(48));
 
             iBlur3FactoryFrostedLiquidGlass = new BlurredBackgroundDrawableViewFactory(iBlur3SourceGlassFrosted);
             iBlur3FactoryFrostedLiquidGlass.setLiquidGlassEffectAllowed(true);
@@ -4794,7 +4794,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             BlurredBackgroundWithFadeDrawable fadeDrawable = new BlurredBackgroundWithFadeDrawable(
                     iBlur3FactoryFade.create(chatInputViewsContainer, null));
-            if (!SharedConfig.chatBlurEnabled() || LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS)) {
+            if (!SharedConfig.chatBlurEnabled() || GlassEngine.getCurrentGlassSettings().isLiquidGlassEnabled) {
                 fadeDrawable.setFadeHeight(dp(72), true);
             }
 
@@ -13857,14 +13857,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             boolean hasBottomBlur = false;
             if (hasMainTabs) {
                 iBlur3PositionMainTabs.set(0, mainTabTop, fragmentView.getMeasuredWidth(), mainTabBottom);
-                iBlur3PositionMainTabs.inset(0, LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS) ? 0 : -dp(48));
+                iBlur3PositionMainTabs.inset(0, GlassEngine.getCurrentGlassSettings().isLiquidGlassEnabled ? 0 : -dp(48));
 
                 hasBottomBlur = true;
             } else if (commentView != null && chatInputViewsContainer != null) {
                 iBlur3PositionMainTabs.set(0,
                     fragmentView.getMeasuredHeight() - calculateListViewPaddingBottom(),
                     fragmentView.getMeasuredWidth(), fragmentView.getMeasuredHeight());
-                iBlur3PositionMainTabs.inset(0, LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS) ? 0 : -dp(48));
+                iBlur3PositionMainTabs.inset(0, GlassEngine.getCurrentGlassSettings().isLiquidGlassEnabled ? 0 : -dp(48));
 
                 hasBottomBlur = true;
             }

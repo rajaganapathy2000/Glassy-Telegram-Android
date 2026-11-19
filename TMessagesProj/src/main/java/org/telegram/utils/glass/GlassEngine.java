@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.postdrawcompat.OnPostDrawListener;
 import org.telegram.messenger.postdrawcompat.ViewOnPostDrawListener;
 import org.telegram.ui.ActionBar.Theme;
@@ -602,8 +601,10 @@ public class GlassEngine {
     private static int glassSettingsGenerationId;
 
     private static void checkGlassSettings() {
-        final boolean isBlurEnabled = LiteMode.isEnabled(LiteMode.FLAG_CHAT_BLUR);
-        final boolean isLiquidGlassEnabled = LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS);
+        final boolean isLiquidGlassEnabled = GlassSettings.canRenderAppWideLiquidGlass();
+        // Android 12 uses the existing frosted source; the richer liquid material remains
+        // guarded by its Android 13 drawable implementation.
+        final boolean isBlurEnabled = isLiquidGlassEnabled;
 
         final boolean glassSettingsInvalidated = glassSettings == null
             || glassSettings.isBlurEnabled != isBlurEnabled
@@ -622,6 +623,7 @@ public class GlassEngine {
 
     /** Changes with the glass settings (LiteMode reports its changes here): a cheap check for drawables drawn by hand. */
     public static int getGlassSettingsGenerationId() {
+        checkGlassSettings();
         return glassSettingsGenerationId;
     }
 }
