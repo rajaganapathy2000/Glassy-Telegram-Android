@@ -470,7 +470,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 postInvalidateOnAnimation();
             }
         }
-    
+
         private int colorsGeneration = ThemeBind.generation();
 
         @Override
@@ -479,7 +479,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 paint.setColor(Theme.getColor(Theme.key_login_progressInner));
                 paint2.setColor(Theme.getColor(Theme.key_login_progressOuter));
                 invalidate();
-        
+
             } catch (Exception e) {
                 FileLog.e(e);
             }
@@ -3271,7 +3271,11 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                             needShowAlert(getString(R.string.RestorePasswordNoEmailTitle), getString("CodeExpired", R.string.CodeExpired));
                         } else if (error.text.startsWith("FLOOD_WAIT")) {
                             needShowAlert(getString(R.string.RestorePasswordNoEmailTitle), getString("FloodWait", R.string.FloodWait));
-                        } else if (error.code != -1000) {
+                        } else if (error.code == -1000 || TextUtils.isEmpty(error.text)) {
+                            String details = "Login request failed.\nError code: " + error.code
+                                    + "\nDetails: " + (TextUtils.isEmpty(error.text) ? "No error details received" : error.text);
+                            needShowAlert("Glassy Telegram login diagnostic", details);
+                        } else {
                             AlertsCreator.processError(currentAccount, error, LoginActivity.this, req, phoneInputData.phoneNumber);
                         }
                     }
@@ -9133,7 +9137,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             showProxyButton(false, animated);
         }
     }
-    
+
     private boolean proxyButtonVisible;
     private Runnable showProxyButtonDelayed;
     private void showProxyButtonDelayed() {
