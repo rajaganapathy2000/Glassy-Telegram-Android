@@ -640,6 +640,14 @@ public abstract class BaseFragment {
             simpleActionBar.setEnabled(false);
         }
 
+        if (simpleGlass != null) {
+            simpleGlass.destroy();
+            simpleGlass = null;
+        }
+        if (glassEngine != null) {
+            glassEngine.clear();
+        }
+
         if (hasForceLightStatusBar() && !AndroidUtilities.isTablet() && getParentLayout().getLastFragment() == this && getParentActivity() != null && !finishing) {
             AndroidUtilities.setLightStatusBar(getParentActivity(), Theme.getColor(Theme.key_actionBarDefault) == Color.WHITE);
         }

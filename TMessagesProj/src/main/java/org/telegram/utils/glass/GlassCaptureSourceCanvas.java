@@ -32,6 +32,23 @@ import java.util.ArrayList;
 @RequiresApi(api = Build.VERSION_CODES.S)
 public class GlassCaptureSourceCanvas {
 
+    public void destroy() {
+        for (int a = 0; a < positions.size(); a++) {
+            Position pos = positions.get(a);
+            if (pos != null) {
+                if (pos.renderNode != null) pos.renderNode.discardDisplayList();
+                if (pos.renderNodeGlass != null) pos.renderNodeGlass.discardDisplayList();
+                if (pos.renderNodeGlassFrosted != null) pos.renderNodeGlassFrosted.discardDisplayList();
+                if (pos.renderNodeFiltered != null) pos.renderNodeFiltered.discardDisplayList();
+                if (pos.renderNodeFrostedFiltered != null) pos.renderNodeFrostedFiltered.discardDisplayList();
+            }
+        }
+        positions.clear();
+        positionsCount = 0;
+        capture = null;
+        rootView = null;
+    }
+
     public enum SourceIndex {
         BLURRED,
         GLASS,

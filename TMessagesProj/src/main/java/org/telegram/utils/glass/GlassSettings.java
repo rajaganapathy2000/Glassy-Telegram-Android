@@ -2,9 +2,11 @@ package org.telegram.utils.glass;
 
 import android.os.Build;
 
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.MessagesController;
+import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.SharedConfig;
 
 import java.util.Objects;
@@ -14,16 +16,28 @@ public class GlassSettings {
 
     public final boolean isBlurEnabled;
     public final boolean isLiquidGlassEnabled;
+    public final boolean isAppWideLiquidGlassEnabled;
+    public final boolean isChatLiquidGlassEnabled;
 
     public GlassSettings(boolean isBlurEnabled, boolean isLiquidGlassEnabled) {
+        this(isBlurEnabled, isLiquidGlassEnabled, isLiquidGlassEnabled, isLiquidGlassEnabled);
+    }
+
+    public GlassSettings(boolean isBlurEnabled, boolean isLiquidGlassEnabled,
+                         boolean isAppWideLiquidGlassEnabled, boolean isChatLiquidGlassEnabled) {
         this.isBlurEnabled = isBlurEnabled;
         this.isLiquidGlassEnabled = isLiquidGlassEnabled;
+        this.isAppWideLiquidGlassEnabled = isAppWideLiquidGlassEnabled;
+        this.isChatLiquidGlassEnabled = isChatLiquidGlassEnabled;
     }
 
     /** This is deliberately separate from Telegram's chat-only Lite Mode Liquid Glass setting. */
     public static boolean isGlassyBuild() {
-        return ApplicationLoader.applicationContext != null
-                && ApplicationLoader.applicationContext.getPackageName().endsWith(".glassy");
+        if (ApplicationLoader.applicationContext == null) {
+            return false;
+        }
+        String pkg = ApplicationLoader.applicationContext.getPackageName();
+        return pkg != null && (pkg.endsWith(".glassy") || pkg.contains("glassy"));
     }
 
     public static boolean isSupported() {
@@ -32,13 +46,17 @@ public class GlassSettings {
 
     public static boolean isAppWideLiquidGlassEnabled() {
         return isSupported() && MessagesController.getGlobalMainSettings()
-                .getBoolean(APP_WIDE_LIQUID_GLASS_KEY, false);
+                .getBoolean(APP_WIDE_LIQUID_GLASS_KEY, true);
     }
 
     public static void setAppWideLiquidGlassEnabled(boolean enabled) {
         MessagesController.getGlobalMainSettings().edit()
                 .putBoolean(APP_WIDE_LIQUID_GLASS_KEY, enabled)
                 .apply();
+        GlassEngine.resetGlassSettings();
+        AndroidUtilities.runOnUIThread(() -> {
+            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.didSetNewTheme, false, false);
+        });
     }
 
     /**
@@ -62,11 +80,13 @@ public class GlassSettings {
 
         GlassSettings settings = (GlassSettings) object;
         return isBlurEnabled == settings.isBlurEnabled
-                && isLiquidGlassEnabled == settings.isLiquidGlassEnabled;
+                && isLiquidGlassEnabled == settings.isLiquidGlassEnabled
+                && isAppWideLiquidGlassEnabled == settings.isAppWideLiquidGlassEnabled
+                && isChatLiquidGlassEnabled == settings.isChatLiquidGlassEnabled;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isBlurEnabled, isLiquidGlassEnabled);
+        return Objects.hash(isBlurEnabled, isLiquidGlassEnabled, isAppWideLiquidGlassEnabled, isChatLiquidGlassEnabled);
     }
 }

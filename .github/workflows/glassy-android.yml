@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - feature/app-wide-liquid-glass
 
 permissions:
   contents: read
@@ -63,10 +64,14 @@ jobs:
           api_id = os.environ.get("TELEGRAM_API_ID", "").strip()
           api_hash = os.environ.get("TELEGRAM_API_HASH", "").strip()
 
+          if not api_id or not api_hash:
+              print("TELEGRAM_API_ID / TELEGRAM_API_HASH secrets not set; keeping defaults from BuildVars.java.")
+              raise SystemExit(0)
+
           if not api_id.isdigit():
-              raise SystemExit("TELEGRAM_API_ID secret is missing or invalid")
+              raise SystemExit("TELEGRAM_API_ID secret is invalid (must be digits)")
           if not re.fullmatch(r"[0-9a-fA-F]{32}", api_hash):
-              raise SystemExit("TELEGRAM_API_HASH secret is missing or invalid")
+              raise SystemExit("TELEGRAM_API_HASH secret is invalid (must be 32-hex string)")
 
           p = Path("TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java")
           s = p.read_text()

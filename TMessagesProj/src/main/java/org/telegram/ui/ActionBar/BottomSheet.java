@@ -80,8 +80,10 @@ import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.ItemOptions;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.LaunchActivity;
+import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl;
 import org.telegram.utils.glass.BaseFragmentSimpleGlass;
 import org.telegram.utils.glass.GlassEngine;
+import org.telegram.utils.glass.GlassSettings;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -1561,7 +1563,19 @@ public class BottomSheet extends Dialog implements BaseFragment.AttachedSheet {
                     onContainerTranslationYChanged(translationY);
                 }
             };
-            containerView.setBackgroundDrawable(shadowDrawable);
+            if (attachedFragment != null && GlassSettings.canRenderAppWideLiquidGlass()) {
+                BaseFragmentSimpleGlass baseSimpleGlass = attachedFragment.getBaseSimpleGlass();
+                if (baseSimpleGlass != null && baseSimpleGlass.frostedFactory != null) {
+                    containerView.setBackground(baseSimpleGlass.frostedFactory.create(containerView, true)
+                            .setColorProvider(BlurredBackgroundProviderImpl.frostedSheet(resourcesProvider))
+                            .setRadius(dp(16))
+                            .setPadding(backgroundPaddingLeft, backgroundPaddingTop, backgroundPaddingLeft, backgroundPaddingBottom));
+                } else {
+                    containerView.setBackgroundDrawable(shadowDrawable);
+                }
+            } else {
+                containerView.setBackgroundDrawable(shadowDrawable);
+            }
             containerView.setPadding(backgroundPaddingLeft, (applyTopPadding ? dp(8) : 0) + backgroundPaddingTop - 1, backgroundPaddingLeft, (applyBottomPadding ? dp(8) : 0));
         }
         containerView.setVisibility(View.INVISIBLE);

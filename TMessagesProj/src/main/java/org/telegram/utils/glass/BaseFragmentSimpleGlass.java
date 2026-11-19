@@ -282,6 +282,22 @@ public class BaseFragmentSimpleGlass {
         this.capture = capture;
     }
 
+    public void destroy() {
+        if (glassCaptureSourceCanvas != null) {
+            glassCaptureSourceCanvas.destroy();
+        }
+        if (glassSource != null) {
+            glassSource.destroy();
+        }
+        if (frostedGlassSource != null) {
+            frostedGlassSource.destroy();
+        }
+        capture = null;
+        contentView = null;
+        clipView = null;
+        onCaptured = null;
+    }
+
     private void invalidate(int flags) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || glassCaptureSourceCanvas == null || !captureIgnoresBlurSetting && !GlassEngine.getCurrentGlassSettings().isBlurEnabled) {
             return;

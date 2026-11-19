@@ -242,4 +242,13 @@ public final class GlassSourceRenderNode implements GlassSource, BlurredBackgrou
     public void attachDrawable(BlurredBackgroundDrawable drawable) {
         drawables.add(drawable);
     }
+
+    public void destroy() {
+        if (renderNode != null) {
+            renderNode.discardDisplayList();
+        }
+        drawables.clear();
+        underSource = null;
+        glassCaptureSourceCanvas = null;
+    }
 }

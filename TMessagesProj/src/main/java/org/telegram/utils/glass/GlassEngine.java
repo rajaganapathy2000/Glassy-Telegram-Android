@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.postdrawcompat.OnPostDrawListener;
 import org.telegram.messenger.postdrawcompat.ViewOnPostDrawListener;
 import org.telegram.ui.ActionBar.Theme;
@@ -74,6 +75,22 @@ public class GlassEngine {
 
     public void registerDrawable(@NonNull View view, @NonNull GlassDrawable drawable) {
         viewPositionStates.add(new ViewPositionState(view, drawable));
+    }
+
+    public void unregisterDrawable(@NonNull View view) {
+        for (int a = viewPositionStates.size() - 1; a >= 0; a--) {
+            if (viewPositionStates.get(a).view == view) {
+                viewPositionStates.remove(a);
+            }
+        }
+    }
+
+    public void clear() {
+        viewPositionStates.clear();
+        themedSourceColorStates.clear();
+        recyclerListViews.clear();
+        downscaleScrollableNoiseSuppressors.clear();
+        setRoot(null);
     }
 
     private final RectF externalCapturePosition = new RectF();
@@ -600,18 +617,25 @@ public class GlassEngine {
     private static GlassSettings glassSettings;
     private static int glassSettingsGenerationId;
 
+    public static void resetGlassSettings() {
+        glassSettings = null;
+        glassSettingsGenerationId++;
+    }
+
     private static void checkGlassSettings() {
-        final boolean isLiquidGlassEnabled = GlassSettings.canRenderAppWideLiquidGlass();
-        // Android 12 uses the existing frosted source; the richer liquid material remains
-        // guarded by its Android 13 drawable implementation.
-        final boolean isBlurEnabled = isLiquidGlassEnabled;
+        final boolean isAppWideLiquidGlass = GlassSettings.canRenderAppWideLiquidGlass();
+        final boolean isChatLiquidGlass = LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS);
+        final boolean isLiquidGlassEnabled = isAppWideLiquidGlass || isChatLiquidGlass;
+        final boolean isBlurEnabled = isAppWideLiquidGlass || LiteMode.isEnabled(LiteMode.FLAG_CHAT_BLUR);
 
         final boolean glassSettingsInvalidated = glassSettings == null
             || glassSettings.isBlurEnabled != isBlurEnabled
-            || glassSettings.isLiquidGlassEnabled != isLiquidGlassEnabled;
+            || glassSettings.isLiquidGlassEnabled != isLiquidGlassEnabled
+            || glassSettings.isAppWideLiquidGlassEnabled != isAppWideLiquidGlass
+            || glassSettings.isChatLiquidGlassEnabled != isChatLiquidGlass;
 
         if (glassSettingsInvalidated) {
-            glassSettings = new GlassSettings(isBlurEnabled, isLiquidGlassEnabled);
+            glassSettings = new GlassSettings(isBlurEnabled, isLiquidGlassEnabled, isAppWideLiquidGlass, isChatLiquidGlass);
             glassSettingsGenerationId++;
         }
     }

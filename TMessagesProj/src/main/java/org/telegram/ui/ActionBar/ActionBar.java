@@ -290,6 +290,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         return menuRise;
     }
 
+    public BlurredBackgroundDrawableViewFactory getGlassFactory() {
+        return menuGlassFactory != null ? menuGlassFactory : glassFactory;
+    }
+
+    public BlurredBackgroundColorProvider getGlassColorProvider() {
+        return glassColorProvider;
+    }
+
     @Override
     public BlurredBackgroundDrawable createMenuGlass(View owner) {
         final BlurredBackgroundDrawableViewFactory factory = menuGlassFactory != null ? menuGlassFactory : glassFactory;

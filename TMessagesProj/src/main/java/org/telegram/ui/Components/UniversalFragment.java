@@ -84,6 +84,11 @@ public abstract class UniversalFragment extends BaseFragment {
         return fragmentView = contentView;
     }
 
+    @Override
+    protected RecyclerListView getListViewForSimpleGlass() {
+        return listView;
+    }
+
     protected abstract CharSequence getTitle();
     protected abstract void fillItems(ArrayList<UItem> items, UniversalAdapter adapter);
     protected abstract void onClick(UItem item, View view, int position, float x, float y);

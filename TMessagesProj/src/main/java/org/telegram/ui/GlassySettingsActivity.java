@@ -64,9 +64,11 @@ public class GlassySettingsActivity extends UniversalFragment {
             return;
         }
         GlassSettings.setAppWideLiquidGlassEnabled(!GlassSettings.isAppWideLiquidGlassEnabled());
-        // Drawables outside this screen lazily observe the new generation on their next frame.
+        GlassEngine.resetGlassSettings();
         GlassEngine.getCurrentGlassSettings();
-        listView.adapter.update(true);
+        if (listView != null && listView.adapter != null) {
+            listView.adapter.update(true);
+        }
     }
 
     @Override

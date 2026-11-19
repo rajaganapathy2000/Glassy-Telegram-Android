@@ -24,6 +24,7 @@ import org.telegram.messenger.utils.ViewOutlineProviderImpl;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawable;
 import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundColorProviderThemed;
+import org.telegram.utils.glass.GlassSettings;
 import org.telegram.utils.glass.source.GlassSourceColor;
 
 import java.util.ArrayList;
@@ -199,18 +200,49 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
             progressView.setProgressColor(Theme.getColor(Theme.key_chats_actionIcon, resourcesProvider));
             final int color = Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider);
             final int pressedColor = Theme.getColor(Theme.key_featuredStickers_addButtonPressed, resourcesProvider);
-            if (recolorBackground) {
-                if (color != themedBackgroundColor || pressedColor != themedBackgroundPressedColor) {
+            if (GlassSettings.canRenderAppWideLiquidGlass()) {
+                if (iBlur3Background == null) {
+                    iBlur3ColorProviderTabs = new BlurredBackgroundColorProviderThemed(resourcesProvider, Theme.key_featuredStickers_addButton) {
+                        @Override
+                        public int getStrokeColorTop() {
+                            return 0x33FFFFFF;
+                        }
+
+                        @Override
+                        public int getStrokeColorBottom() {
+                            return 0x22FFFFFF;
+                        }
+
+                        @Override
+                        public int getShadowColor() {
+                            return 0x25000000;
+                        }
+                    };
+                    iBlur3SourceColor = new GlassSourceColor();
+                    iBlur3Background = new BlurredBackgroundDrawable(iBlur3SourceColor);
+                    iBlur3Background.setColorProvider(iBlur3ColorProviderTabs);
+                    iBlur3Background.setStrokeWidth(dpf2(0.5f), dpf2(0.5f));
+                    iBlur3Background.setRadius(dp(24));
+                    iBlur3Background.setPadding(dp(6));
+                }
+                setBackground(Theme.createSimpleSelectorCircleDrawable(dp(48), 0, pressedColor));
+            } else {
+                if (iBlur3Background != null) {
+                    iBlur3Background = null;
+                }
+                if (recolorBackground) {
+                    if (color != themedBackgroundColor || pressedColor != themedBackgroundPressedColor) {
+                        themedBackgroundColor = color;
+                        themedBackgroundPressedColor = pressedColor;
+                        Theme.setSelectorDrawableColor(themedBackground, color, false);
+                        Theme.setSelectorDrawableColor(themedBackground, pressedColor, true);
+                        themedBackground.invalidateSelf();
+                    }
+                } else {
                     themedBackgroundColor = color;
                     themedBackgroundPressedColor = pressedColor;
-                    Theme.setSelectorDrawableColor(themedBackground, color, false);
-                    Theme.setSelectorDrawableColor(themedBackground, pressedColor, true);
-                    themedBackground.invalidateSelf();
+                    setBackground(themedBackground = Theme.createSimpleSelectorCircleDrawable(dp(48), color, pressedColor));
                 }
-            } else {
-                themedBackgroundColor = color;
-                themedBackgroundPressedColor = pressedColor;
-                setBackground(themedBackground = Theme.createSimpleSelectorCircleDrawable(dp(48), color, pressedColor));
             }
         }
     }

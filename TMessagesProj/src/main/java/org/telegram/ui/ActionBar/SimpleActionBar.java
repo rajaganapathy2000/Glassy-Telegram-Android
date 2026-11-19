@@ -143,6 +143,14 @@ public class SimpleActionBar extends FrameLayout implements FactorAnimator.Targe
         createButtonsGlass();
     }
 
+    public BlurredBackgroundDrawableViewFactory getGlassFactory() {
+        return glassFactory;
+    }
+
+    public BlurredBackgroundColorProvider getGlassColorProvider() {
+        return glassColorProvider;
+    }
+
     private void createButtonsGlass() {
         final BlurredBackgroundDrawableViewFactory factory = buttonsGlassFactory != null ? buttonsGlassFactory : glassFactory;
         if (factory == null) {

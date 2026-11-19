@@ -86,6 +86,7 @@ import org.telegram.ui.Components.RLottieDrawable;
 import org.telegram.ui.Components.RLottieImageView;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
 import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory;
+import org.telegram.utils.glass.GlassSettings;
 import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundProvider;
 import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl;
 
@@ -495,6 +496,17 @@ public class ActionBarMenuItem extends FrameLayout {
         rect = new Rect();
         location = new int[2];
         popupLayout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(getContext(), R.drawable.popup_fixed_alert4, resourcesProvider, ActionBarPopupWindow.ActionBarPopupWindowLayout.FLAG_USE_SWIPEBACK);
+
+        if (subMenuFactory == null && parentMenu != null && parentMenu.parentActionBar != null && GlassSettings.canRenderAppWideLiquidGlass()) {
+            BlurredBackgroundDrawableViewFactory factory = parentMenu.parentActionBar.getGlassFactory();
+            org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundColorProvider provider = parentMenu.parentActionBar.getGlassColorProvider();
+            if (factory != null) {
+                subMenuFactory = factory;
+                if (provider != null) {
+                    subMenuProvider = provider;
+                }
+            }
+        }
 
         if (subMenuFactory != null) {
             popupLayout.setBackground(subMenuFactory.create(popupLayout, true)

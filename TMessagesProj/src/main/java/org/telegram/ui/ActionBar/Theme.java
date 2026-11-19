@@ -4098,6 +4098,16 @@ public class Theme {
         themes.add(themeInfo);
         themesDict.put("Night", themeInfo);
 
+        themeInfo = new ThemeInfo();
+        themeInfo.name = "Glassy";
+        themeInfo.assetName = "glassy.attheme";
+        themeInfo.previewBackgroundColor = 0xff0f0e14;
+        themeInfo.previewInColor = 0xff00daff;
+        themeInfo.previewOutColor = 0xff00ffa5;
+        themeInfo.sortIndex = 5;
+        themes.add(themeInfo);
+        themesDict.put("Glassy", themeInfo);
+
         String themesString = themeConfig.getString("themes2", null);
 
         int remoteVersion = themeConfig.getInt("remote_version", 0);

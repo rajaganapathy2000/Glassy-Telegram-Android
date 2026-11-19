@@ -73,6 +73,7 @@ import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory;
 import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawable;
 import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundProvider;
 import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl;
+import org.telegram.utils.glass.GlassSettings;
 import org.telegram.utils.glass.source.GlassSourceBitmap;
 import org.telegram.ui.Components.blur3.utils.Blur3Utils;
 import org.telegram.ui.ContactsActivity;
@@ -155,7 +156,7 @@ public class ItemOptions {
     private boolean drawScrim = true;
 
     private boolean blur;
-    private boolean blurForMenu;
+    private boolean blurForMenu = GlassSettings.canRenderAppWideLiquidGlass();
     private boolean longPressSelectionEnabled = true;
 
     public ItemOptions setLongPressSelectionEnabled(boolean enabled) {
@@ -2119,7 +2120,7 @@ public class ItemOptions {
             }
             dim = ColorUtils.setAlphaComponent(0x00000000, dimAlpha);
 
-            if (drawScrim && scrimView instanceof UserCell && fragment instanceof ProfileActivity) {
+            if (drawScrim && scrimView != null && scrimView instanceof UserCell && fragment instanceof ProfileActivity) {
                 cachedBitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
                 cachedBitmap = Bitmap.createBitmap(scrimView.getWidth() + viewAdditionalOffsets.width(), scrimView.getHeight() + viewAdditionalOffsets.height(), Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(cachedBitmap);
@@ -2132,9 +2133,13 @@ public class ItemOptions {
 
             if (blur || blurForMenu) {
                 blurPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-                scrimView.setAlpha(0.0f);
+                if (scrimView != null) {
+                    scrimView.setAlpha(0.0f);
+                }
                 ScrimOptions.makeGlobalBlurBitmaps(pointContainer, (bitmapBg, bitmapOptions) -> {
-                    scrimView.setAlpha(1.0f);
+                    if (scrimView != null) {
+                        scrimView.setAlpha(1.0f);
+                    }
                     if (blur) blurBitmap = bitmapBg;
                     if (scrimBlur3SourceBitmap != null) {
                         scrimBlur3SourceBitmap.setBitmap(bitmapOptions);
@@ -2172,7 +2177,7 @@ public class ItemOptions {
             }
 
             if (!drawScrim) {
-            } else if (cachedBitmap != null && scrimView.getParent() instanceof View) {
+            } else if (cachedBitmap != null && scrimView != null && scrimView.getParent() instanceof View) {
                 canvas.save();
                 if (clipTop < 1) {
                     canvas.clipRect(-viewAdditionalOffsets.left, -viewAdditionalOffsets.top + point[1] - clipTop * (blur ? 1.0f - dimProgress : 1.0f) + 1, getMeasuredWidth() + viewAdditionalOffsets.right, getMeasuredHeight() + viewAdditionalOffsets.bottom);

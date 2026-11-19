@@ -270,7 +270,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
             items.add(Item.asCheckbox(LocaleController.getString(R.string.LiteOptionsAutoplayChat), LiteMode.FLAG_ANIMATED_EMOJI_CHAT));
         }
         items.add(Item.asSwitch(R.drawable.msg2_ask_question, LocaleController.getString(R.string.LiteOptionsChat), FLAGS_CHAT));
-        if (Build.VERSION.SDK_INT >= 33) {
+        if (Build.VERSION.SDK_INT >= 31) {
             items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsLiquidGlass"), LiteMode.FLAG_LIQUID_GLASS));
         }
         if (expanded[2]) {
