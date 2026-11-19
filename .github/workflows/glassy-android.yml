@@ -51,6 +51,44 @@ jobs:
                       p.write_text(json.dumps(data, indent=2) + "\n")
           PY
 
+      - name: Configure Glassy Telegram API credentials
+        env:
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+        run: |
+          python3 - <<'PYTHON'
+          import os, re
+          from pathlib import Path
+
+          api_id = os.environ.get("TELEGRAM_API_ID", "").strip()
+          api_hash = os.environ.get("TELEGRAM_API_HASH", "").strip()
+
+          if not api_id.isdigit():
+              raise SystemExit("TELEGRAM_API_ID secret is missing or invalid")
+          if not re.fullmatch(r"[0-9a-fA-F]{32}", api_hash):
+              raise SystemExit("TELEGRAM_API_HASH secret is missing or invalid")
+
+          p = Path("TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java")
+          s = p.read_text()
+
+          s, n1 = re.subn(
+              r"public static int APP_ID = [0-9]+;",
+              f"public static int APP_ID = {api_id};",
+              s, count=1
+          )
+          s, n2 = re.subn(
+              r'public static String APP_HASH = "[^"]*";',
+              f'public static String APP_HASH = "{api_hash}";',
+              s, count=1
+          )
+
+          if n1 != 1 or n2 != 1:
+              raise SystemExit("Could not safely update both API credential fields")
+
+          p.write_text(s)
+          print("Glassy Telegram API credentials configured successfully.")
+          PYTHON
+
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
