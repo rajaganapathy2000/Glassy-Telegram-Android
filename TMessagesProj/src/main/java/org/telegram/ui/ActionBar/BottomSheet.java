@@ -1569,7 +1569,7 @@ public class BottomSheet extends Dialog implements BaseFragment.AttachedSheet {
                     containerView.setBackground(baseSimpleGlass.frostedFactory.create(containerView, true)
                             .setColorProvider(BlurredBackgroundProviderImpl.frostedSheet(resourcesProvider))
                             .setRadius(dp(16))
-                            .setPadding(backgroundPaddingLeft, backgroundPaddingTop, backgroundPaddingLeft, backgroundPaddingBottom));
+                            .setPadding(backgroundPaddingLeft));
                 } else {
                     containerView.setBackgroundDrawable(shadowDrawable);
                 }

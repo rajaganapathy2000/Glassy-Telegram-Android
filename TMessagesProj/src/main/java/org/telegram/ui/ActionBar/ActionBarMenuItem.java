@@ -843,9 +843,9 @@ public class ActionBarMenuItem extends FrameLayout {
     }
 
     private BlurredBackgroundDrawableViewFactory subMenuFactory;
-    private BlurredBackgroundProvider subMenuProvider;
+    private org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundColorProvider subMenuProvider;
 
-    public void setBlurredBackgroundFactory(BlurredBackgroundDrawableViewFactory subMenuFactory, BlurredBackgroundProvider subMenuProvider) {
+    public void setBlurredBackgroundFactory(BlurredBackgroundDrawableViewFactory subMenuFactory, org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundColorProvider subMenuProvider) {
         this.subMenuFactory = subMenuFactory;
         this.subMenuProvider = subMenuProvider;
         if (popupLayout != null && subMenuFactory != null) {
