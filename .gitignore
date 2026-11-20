@@ -17,4 +17,6 @@ TMessagesProj/jni/ffmpeg/build_android
 buildSrc/.kotlin/
 buildSrc/build/
 /Glassy.attheme
+*.apk
+*.class
 

@@ -289,8 +289,11 @@ public abstract class BaseFragment {
     private View performCreateViewImpl(Context context) {
         final View view = createView(context);
 
-        final RecyclerListView listViewForGlass = getListViewForSimpleGlass();
+        RecyclerListView listViewForGlass = getListViewForSimpleGlass();
         final SectionsScrollView scrollViewForGlass = getScrollViewForSimpleGlass();
+        if (listViewForGlass == null && scrollViewForGlass == null && view instanceof ViewGroup) {
+            listViewForGlass = findFirstRecyclerListView((ViewGroup) view);
+        }
 
         listViewForSimpleGlass = listViewForGlass != null ? listViewForGlass : scrollViewForGlass;
         if (listViewForSimpleGlass != null && view instanceof FrameLayout) {
@@ -303,7 +306,7 @@ public abstract class BaseFragment {
                 simpleGlass.setViews((FrameLayout) view, scrollViewForGlass, header, resourceProvider);
             }
 
-            if (useFadeDrawableForActionBar() && header != null) {
+            if (useFadeDrawableForActionBar() && header != null && !(header instanceof ActionBar && ((ActionBar) header).isGlassMode())) {
                 header.setBackground(simpleGlass.createActionBarFadeDrawable(header));
             }
             BaseFragmentSimpleGlass.setListViewParams(listViewForSimpleGlass, mSystemInsets.top, mSystemInsets.bottom, ActionBar.getCurrentActionBarHeight(), 0);
@@ -319,6 +322,24 @@ public abstract class BaseFragment {
 
         onViewCreated(view);
         return view;
+    }
+
+    private static RecyclerListView findFirstRecyclerListView(ViewGroup group) {
+        if (group == null) {
+            return null;
+        }
+        for (int i = 0; i < group.getChildCount(); i++) {
+            View child = group.getChildAt(i);
+            if (child instanceof RecyclerListView) {
+                return (RecyclerListView) child;
+            } else if (child instanceof ViewGroup && !(child instanceof ActionBar)) {
+                RecyclerListView found = findFirstRecyclerListView((ViewGroup) child);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
     }
 
     protected boolean useFadeDrawableForActionBar() {

@@ -155,7 +155,7 @@ public class ItemOptions {
     private int dimAlpha;
     private boolean drawScrim = true;
 
-    private boolean blur;
+    private boolean blur = true;
     private boolean blurForMenu = GlassSettings.canRenderAppWideLiquidGlass();
     private boolean longPressSelectionEnabled = true;
 

@@ -4104,9 +4104,12 @@ public class Theme {
         themeInfo.previewBackgroundColor = 0xff0f0e14;
         themeInfo.previewInColor = 0xff00daff;
         themeInfo.previewOutColor = 0xff00ffa5;
-        themeInfo.sortIndex = 5;
-        themes.add(themeInfo);
+        themeInfo.sortIndex = 0;
+        themes.add(0, themeInfo);
         themesDict.put("Glassy", themeInfo);
+        defaultTheme = themeInfo;
+        currentDayTheme = themeInfo;
+        currentNightTheme = themeInfo;
 
         String themesString = themeConfig.getString("themes2", null);
 
@@ -4157,14 +4160,19 @@ public class Theme {
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
         try {
             final ThemeInfo themeDarkBlue = themesDict.get("Dark Blue");
+            final ThemeInfo themeGlassy = themesDict.get("Glassy");
 
             String theme = preferences.getString("theme", null);
             if ("Default".equals(theme)) {
-                applyingTheme = themesDict.get("Blue");
-                applyingTheme.currentAccentId = DEFALT_THEME_ACCENT_ID;
+                applyingTheme = themeGlassy != null ? themeGlassy : themesDict.get("Blue");
+                if (applyingTheme != null) {
+                    applyingTheme.currentAccentId = DEFALT_THEME_ACCENT_ID;
+                }
             } else if ("Dark".equals(theme)) {
-                applyingTheme = themeDarkBlue;
-                applyingTheme.currentAccentId = 9;
+                applyingTheme = themeGlassy != null ? themeGlassy : themeDarkBlue;
+                if (applyingTheme != null) {
+                    applyingTheme.currentAccentId = 9;
+                }
             } else if (theme != null) {
                 applyingTheme = themesDict.get(theme);
                 if (applyingTheme != null && !themeConfig.contains("lastDayTheme")) {
@@ -4172,20 +4180,22 @@ public class Theme {
                     editor.putString("lastDayTheme", applyingTheme.getKey());
                     editor.commit();
                 }
+            } else {
+                applyingTheme = themeGlassy;
             }
 
             theme = preferences.getString("nighttheme", null);
-            if ("Default".equals(theme)) {
-                applyingTheme = themesDict.get("Blue");
-                applyingTheme.currentAccentId = DEFALT_THEME_ACCENT_ID;
-            } else if ("Dark".equals(theme)) {
-                currentNightTheme = themeDarkBlue;
-                themeDarkBlue.currentAccentId = 9;
+            if ("Default".equals(theme) || "Dark".equals(theme)) {
+                currentNightTheme = themeGlassy != null ? themeGlassy : themeDarkBlue;
             } else if (theme != null) {
                 ThemeInfo t = themesDict.get(theme);
                 if (t != null) {
                     currentNightTheme = t;
+                } else {
+                    currentNightTheme = themeGlassy != null ? themeGlassy : themeDarkBlue;
                 }
+            } else {
+                currentNightTheme = themeGlassy != null ? themeGlassy : themeDarkBlue;
             }
 
             if (currentNightTheme != null && !themeConfig.contains("lastDarkTheme")) {
@@ -4373,10 +4383,10 @@ public class Theme {
             throw new RuntimeException(e);
         }
         if (applyingTheme == null) {
-            applyingTheme = defaultTheme;
-        } else {
-            currentDayTheme = applyingTheme;
+            final ThemeInfo themeGlassy = themesDict.get("Glassy");
+            applyingTheme = themeGlassy != null ? themeGlassy : defaultTheme;
         }
+        currentDayTheme = applyingTheme;
 
         if (preferences.contains("overrideThemeWallpaper") || preferences.contains("selectedBackground2")) {
             boolean override = preferences.getBoolean("overrideThemeWallpaper", false);

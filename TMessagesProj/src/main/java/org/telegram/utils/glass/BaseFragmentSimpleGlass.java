@@ -269,7 +269,7 @@ public class BaseFragmentSimpleGlass {
             actionBar.setAddToContainer(false);
             actionBar.setCenterTitleAndGlass(true);
             actionBar.setExtraHeight(dp(6));
-            actionBar.doNotDrawCenterGlass = true;
+            actionBar.doNotDrawCenterGlass = false;
             actionBar.setupGlass(factory, BlurredBackgroundProviderImpl.simpleActionBar(resourceProvider));
         }
     }

@@ -203,6 +203,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
     private boolean glassOnlyBack;
     private boolean glassModeIsForum;
 
+    public boolean isGlassMode() {
+        return glassMode;
+    }
+
     private ChatAvatarContainer chatAvatarContainer;
     public boolean doNotDrawCenterGlass;
 
@@ -1324,7 +1328,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
     @Override
     public void setBackgroundColor(int color) {
         actionBarColor = color;
-        if (!blurredBackground) {
+        if (!blurredBackground && !glassMode) {
             super.setBackgroundColor(actionBarColor);
         }
         if (backButtonImageView != null) {
@@ -1333,6 +1337,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                 ((MenuDrawable) drawable).setBackColor(color);
             }
         }
+    }
+
+    @Override
+    public void setBackground(Drawable background) {
+        if (glassMode && background != null) {
+            return;
+        }
+        super.setBackground(background);
     }
 
     public int getBackgroundColor() {

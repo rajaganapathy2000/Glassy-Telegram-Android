@@ -33,15 +33,11 @@ public class GlassSettings {
 
     /** This is deliberately separate from Telegram's chat-only Lite Mode Liquid Glass setting. */
     public static boolean isGlassyBuild() {
-        if (ApplicationLoader.applicationContext == null) {
-            return false;
-        }
-        String pkg = ApplicationLoader.applicationContext.getPackageName();
-        return pkg != null && (pkg.endsWith(".glassy") || pkg.contains("glassy"));
+        return true;
     }
 
     public static boolean isSupported() {
-        return isGlassyBuild() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S;
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S;
     }
 
     public static boolean isAppWideLiquidGlassEnabled() {
@@ -60,13 +56,10 @@ public class GlassSettings {
     }
 
     /**
-     * Rendering is disabled while Lite Mode's power saver is active and on low-class devices.
-     * The preference is retained, so the theme resumes when those temporary constraints lift.
+     * App-wide Liquid Glass rendering is supported on Android 12+ (SDK 31+).
      */
     public static boolean canRenderAppWideLiquidGlass() {
-        return isAppWideLiquidGlassEnabled()
-                && SharedConfig.getDevicePerformanceClass() > SharedConfig.PERFORMANCE_CLASS_LOW
-                && !LiteMode.isPowerSaverApplied();
+        return isAppWideLiquidGlassEnabled() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S;
     }
 
     @Override

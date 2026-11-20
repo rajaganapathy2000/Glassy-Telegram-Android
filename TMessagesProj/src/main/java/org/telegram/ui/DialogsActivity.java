@@ -5246,6 +5246,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         //if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) {
             final FrameLayout.LayoutParams layoutParams = LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT);
             contentView.addView(actionBar, layoutParams);
+            contentView.setClipChildren(false);
+            if (iBlur3FactoryLiquidGlass != null) {
+                actionBar.setupGlass(iBlur3FactoryLiquidGlass, BlurredBackgroundProviderImpl.topPanel(resourceProvider), false);
+            }
         //}
         if (!onlySelect) {
             animatedStatusView = new AnimatedStatusView(context, 20, 60);
